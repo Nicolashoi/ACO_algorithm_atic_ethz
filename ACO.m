@@ -1,9 +1,10 @@
 %% Implementation of the ACO Algorithm %%
 % https://www.researchgate.net/publication/308953674_Ant_Colony_Optimization
 % https://ieeexplore.ieee.org/document/484436?arnumber=484436
-
+clc
+clear all
 %% Parameters Definition
-N = 1; % number of ants
+Nants = 20; % number of ants
 s = [1 1 1 2 2 3];
 t = [2 3 4 4 3 4];
 w = [2 3 5 1 5 1];
@@ -16,56 +17,67 @@ nij = 1./w;
 idxFood = 4;
 startNode = 1;
 Q = 1; % constant, see paper, can be tuned
-
+pathTable = {zeros(Nants,1)}; % cell array to store all paths
+alpha = 1;
+beta = 1;
+plotfigure = true;
 %% Create Graphs
-[G_dist, Adist] = initGraph(false,s, t, nij, names, true);
-[G_trail, Atrail] = initGraph(false,s,t,trail, names, true);
+[Gdist, Adist]= initGraph(false,s, t,w, names, plotfigure);
+[~, Anij] = initGraph(false,s, t, nij, names, false);
+[G_trail, Atrail] = initGraph(false,s,t,trail, names, plotfigure);
 
 %% Start ACO
 % outter loop on number of ants
 % inner loop while ant finds the food
 % array to keep track of the path for each ant
-currentNode = startNode;
-nextNode = startNode;
-setOfNextNodes = nodes; % initial
-probSetOfNextNodes = zeros(size(nodes));
-path = currentNode;
-
-while true
-    idxcurrentNode = find(currentNode == setOfNextNodes);
-    setOfNextNodes(idxcurrentNode) = []; % remove current node from next possible nodes
-    probSetOfNextNodes(idxcurrentNode) = [];
-    % pick next node based on probabilities
-    if length(setOfNextNodes) ==1
-        nextNode = setOfNextNodes;
-    else
-        % compute probability among possible nodes
-        sum_p = sum(Atrail(currentNode, setOfNextNodes).*Adist(currentNode, setOfNextNodes));
-        for i = 1:length(setOfNextNodes)
-            probSetOfNextNodes(i) = (Atrail(currentNode,setOfNextNodes(i))*...
-                                     Adist(currentNode, setOfNextNodes(i)))/sum_p;  
+disp("The shortest path in distance is supposed to be: ");
+disp(shortestpath(Gdist,1,4));
+for i=1:Nants
+    currentNode = startNode;
+    nextNode = startNode;
+    setOfNextNodes = nodes; % initial
+    probSetOfNextNodes = zeros(size(nodes));
+    path = currentNode;
+    pathLength = 0;
+    while true
+        idxcurrentNode = find(currentNode == setOfNextNodes);
+        setOfNextNodes(idxcurrentNode) = []; % remove current node from next possible nodes
+        probSetOfNextNodes(idxcurrentNode) = [];
+        % only allowed move (no backward moves) is end node
+        if length(setOfNextNodes) ==1
+            nextNode = setOfNextNodes;
+        else
+            % compute probability among possible nodes
+            sum_p = sum((Atrail(currentNode, setOfNextNodes).^alpha).*...
+                        (Anij(currentNode, setOfNextNodes).^beta));
+            for j = 1:length(setOfNextNodes)
+                probSetOfNextNodes(j) = (Atrail(currentNode,setOfNextNodes(j))^alpha *...
+                                         Anij(currentNode, setOfNextNodes(j))^beta)/sum_p;  
+            end
+        nextNode = randsample(setOfNextNodes, 1, true, probSetOfNextNodes);  % pick next node based on computed probabilities
         end
-    nextNode = randsample(setOfNextNodes, 1, true, probSetOfNextNodes);  % choose path based on this probabilities 
-    end
-    
-    if nextNode == idxFood % next node is food node
+        pathLength = pathLength + Adist(currentNode, nextNode); 
+        if nextNode == idxFood % next node is food node (final state for the ant)
+            path = [path nextNode];
+            pathTable{i} = path; 
+            for k = 1:length(path)-1 % update the trail matrix
+                Atrail(path(k), path(k+1)) = Atrail(path(k), path(k+1))+ Q/pathLength; 
+                Atrail(path(k+1), path(k)) = Atrail(path(k), path(k+1)); % symmetric matrix
+            end
+            currentNode = nextNode;
+            
+        break % this ant has reached its goal, send next ant in the network 
+        end
+        % store current node in an array to keep track of the path
         path = [path nextNode];
-        for k = 1:length(path)-1
-            Atrail(path(k), path(k+1)) = Q/Adist(path(k), path(k+1));
-            Atrail(path(k+1), path(k)) = Atrail(path(k), path(k+1)); % symmetric matrix
-        end
         currentNode = nextNode;
-    break
-    end
-    % store current node in an array to keep track of the path
-    path = [path nextNode];
-    currentNode = nextNode;
+    end    
 end
-disp("path is = ")
+disp("Path  chosen by the last ant in the network is = ")
 disp(path)
 disp("Pheromone level matrix = ");
 disp(Atrail);
-Aprob = probabilitiesMat(Atrail, Adist, nodes);
+Aprob = probabilitiesMat(Atrail, Anij, nodes);
 disp("Transition probability matrix is = ");
 disp(Aprob)
 G_prob = digraph(Aprob);
