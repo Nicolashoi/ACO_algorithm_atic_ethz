@@ -9,10 +9,9 @@ pathTable = repmat({0}, param.N_ants, param.M_ants); % cell array to store all p
 plotfigure = true;
 %% Create Graphs
 global Adist Atrail Anij
-[Gdist, Adist]= initGraph(false,plotfigure,"Graph of distances");
-[~, Anij] = initGraph(false,~plotfigure);
-[G_trail, Atrail] = initGraph(false,plotfigure,...
-                              "Graph representing pheromone levels on the edges");
+[Gdist, Adist]= initGraph('dist', plotfigure);
+[~, Anij] = initGraph('inverse_dist',~plotfigure);
+[G_trail, Atrail] = initGraph('pheromone',plotfigure);
 
 %% Start ACO
 % outter loop on group of ants
@@ -25,8 +24,9 @@ for i=1:param.N_ants
     
     currentNode = repmat({param.startNode},param.M_ants,1);
     nextNode = repmat({param.startNode}, param.M_ants,1);
-    setOfNextNodes = repmat({param.nodes},param.M_ants,1); % initial
-    probSetOfNextNodes = repmat({zeros(size(param.nodes))}, param.M_ants,1);
+    nodesFromStart = nearest(Gdist, param.startNode, Inf, 'Method', 'unweighted'); %% do this at each node ?
+    setOfNextNodes = repmat({nodesFromStart},param.M_ants,1); % initial
+    probSetOfNextNodes = repmat({zeros(size(nodesFromStart))}, param.M_ants,1);
     path = repmat({param.startNode},param.M_ants,1);
     pathLength = repmat({0}, param.M_ants,1);
     finalNodeReached = false(param.M_ants,1);
@@ -36,8 +36,9 @@ for i=1:param.N_ants
             if finalNodeReached(j) 
                 continue
             end
-            [nextNode{j}, setOfNextNodes{j}, probSetOfNextNodes{j}] = getNextNode(currentNode{j},...
-                                                                    setOfNextNodes{j}, probSetOfNextNodes{j});
+            %[nextNode{j}, setOfNextNodes{j}, probSetOfNextNodes{j}] = getNextNode(currentNode{j},...
+                                                                    %setOfNextNodes{j}, probSetOfNextNodes{j});
+            nextNode{j} = getNextNode(currentNode{j}, Gdist);                                                        
             % store current node in an array to keep track of the path
             pathLength{j} = pathLength{j} + Adist(currentNode{j}, nextNode{j}); 
             path{j} = [path{j} nextNode{j}];
@@ -61,9 +62,6 @@ disp(Atrail);
 Aprob = probabilitiesMatrix(Atrail, Anij, param.nodes);
 disp("Transition probability matrix is = ");
 disp(Aprob)
-G_prob = digraph(Aprob);
-figure()
-plot(G_prob,'EdgeLabel', G_prob.Edges.Weight)
-title("Graph with probabilities on the edges");
+initGraph('probabilities', plotfigure, Aprob);
 
  
