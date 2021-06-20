@@ -38,7 +38,7 @@ for i=1:param.N_ants
             end
             %[nextNode{j}, setOfNextNodes{j}, probSetOfNextNodes{j}] = getNextNode(currentNode{j},...
                                                                     %setOfNextNodes{j}, probSetOfNextNodes{j});
-            nextNode{j} = getNextNode(currentNode{j}, Gdist);                                                        
+            nextNode{j} = getNextNode(currentNode{j}, Gdist, Atrail, Anij);                                                        
             % store current node in an array to keep track of the path
             pathLength{j} = pathLength{j} + Adist(currentNode{j}, nextNode{j}); 
             path{j} = [path{j} nextNode{j}];
@@ -59,7 +59,7 @@ disp("Path  chosen by the last ant in the network is = ")
 disp(path)
 disp("Pheromone level matrix = ");
 disp(Atrail);
-Aprob = probabilitiesMatrix(Atrail, Anij, param.nodes);
+Aprob = probabilitiesMatrix(Atrail, Anij, Gdist);
 disp("Transition probability matrix is = ");
 disp(Aprob)
 initGraph('probabilities', plotfigure, Aprob);
