@@ -12,7 +12,7 @@ global Adist Atrail Anij
 [Gdist, Adist]= initGraph('dist', plotfigure);
 [~, Anij] = initGraph('inverse_dist',~plotfigure);
 [G_trail, Atrail] = initGraph('pheromone',plotfigure);
-
+Trail_update = zeros(size(Atrail));
 %% Start ACO
 % outter loop on group of ants
 % inner loop on ants in the current group
@@ -28,7 +28,7 @@ for i=1:param.N_ants
     setOfNextNodes = repmat({nodesFromStart},param.M_ants,1); % initial
     probSetOfNextNodes = repmat({zeros(size(nodesFromStart))}, param.M_ants,1);
     path = repmat({param.startNode},param.M_ants,1);
-    pathLength = repmat({0}, param.M_ants,1);
+    pathLength = zeros(param.M_ants,1);%repmat(0, param.M_ants,1);
     finalNodeReached = false(param.M_ants,1);
   
     while ~all(finalNodeReached)
@@ -36,24 +36,19 @@ for i=1:param.N_ants
             if finalNodeReached(j) 
                 continue
             end
-            %[nextNode{j}, setOfNextNodes{j}, probSetOfNextNodes{j}] = getNextNode(currentNode{j},...
-                                                                    %setOfNextNodes{j}, probSetOfNextNodes{j});
             nextNode{j} = getNextNode(currentNode{j}, Gdist, Atrail, Anij);                                                        
             % store current node in an array to keep track of the path
-            pathLength{j} = pathLength{j} + Adist(currentNode{j}, nextNode{j}); 
+            pathLength(j) = pathLength(j) + Adist(currentNode{j}, nextNode{j}); 
             path{j} = [path{j} nextNode{j}];
             currentNode{j} = nextNode{j};
 
             if nextNode{j} == param.idxFood % next node is food node (final state for the ant)
                 pathTable{i,j} = path{j}; 
-                for k = 1:length(path{j})-1 % update the trail matrix
-                    Atrail(path{j}(k), path{j}(k+1)) = Atrail(path{j}(k), path{j}(k+1))+ param.Q/pathLength{j}; 
-                    Atrail(path{j}(k+1), path{j}(k)) = Atrail(path{j}(k), path{j}(k+1)); % symmetric matrix
-                end
                 finalNodeReached(j) = true;
             end
         end
-    end    
+    end
+    Atrail = updatePheromone(Atrail, path, pathLength, 'AS');
 end
 disp("Path  chosen by the last ant in the network is = ")
 disp(path)
