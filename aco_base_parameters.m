@@ -1,12 +1,14 @@
 function param = aco_base_parameters
     %% Graph Parameters
-    s = [1 1 1 1 2 2 3 5];
-    t = [2 3 4 5 4 3 4 4];
-    w = [2 1 5 4 1 5 1 2]; % edge weights
-    names = {'n1', 'n2', 'n3', 'n4','n5'};
-    nodes = 1:1:5; %create nodes array
-    idxFood = 4;
-    startNode = 1;
+    load('graph_construction')
+    g = graph3; % change which graph to use here
+%     s = [1 1 1 1 2 2 3 3 5 5 6 6 7];
+%     t = [2 3 4 5 4 3 4 7 4 6 8 7 8];
+%     w = [2 1 5 1 1 5 1 4 2 3 2 1 5]; % edge weights
+%     names = {'n1', 'n2', 'n3', 'n4','n5', 'n6', 'n7', 'n8'};
+%     nodes = 1:1:8; %create nodes array
+%     idxFood = [4, 8];
+%     startNode = 1;
     alpha = 1;
     beta = 1;
     
@@ -14,8 +16,8 @@ function param = aco_base_parameters
     N_ants = 20; % total group of ants
     M_ants = 50; % number of ants in a group
     % initialize trail to small constant https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=484436
-    trail = repmat(0.1, size(w));
-    nij = 1./w; % inverse of edge weights
+    trail = repmat(0.1, size(g.w));
+    nij = 1./g.w; % inverse of edge weights
     Q = 1; % constant, see paper, can be tuned
     evap_rate = 0.1;
     
@@ -24,13 +26,13 @@ function param = aco_base_parameters
     param.trail = trail;
     param.nij = nij;
     param.Q = Q;
-    param.s = s;
-    param.t = t;
-    param.w = w;
-    param.names = names;
-    param.nodes = nodes;
-    param.idxFood = idxFood;
-    param.startNode = startNode;
+    param.s = g.s;
+    param.t = g.t;
+    param.w = g.w;
+    param.names = g.names;
+    param.nodes = g.nodes;
+    param.idxFood = g.idxFood;
+    param.startNode = g.startNode;
     param.alpha = alpha;
     param.beta = beta;
     param.evap_rate = evap_rate;

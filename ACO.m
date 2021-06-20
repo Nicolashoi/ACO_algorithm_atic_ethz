@@ -3,6 +3,7 @@
 % https://ieeexplore.ieee.org/document/484436?arnumber=484436
 clc
 clear
+close all
 %% Parameters Definition
 param = aco_base_parameters;
 pathTable = repmat({0}, param.N_ants, param.M_ants); % cell array to store all paths
@@ -11,7 +12,7 @@ plotfigure = true;
 global Adist Atrail Anij
 [Gdist, Adist]= initGraph('dist', plotfigure);
 [~, Anij] = initGraph('inverse_dist',~plotfigure);
-[G_trail, Atrail] = initGraph('pheromone',plotfigure);
+[G_trail, Atrail] = initGraph('pheromone_begin',~plotfigure);
 Trail_update = zeros(size(Atrail));
 %% Start ACO
 % outter loop on group of ants
@@ -42,7 +43,7 @@ for i=1:param.N_ants
             path{j} = [path{j} nextNode{j}];
             currentNode{j} = nextNode{j};
 
-            if nextNode{j} == param.idxFood % next node is food node (final state for the ant)
+            if any(nextNode{j} == param.idxFood) % next node is food node (final state for the ant)
                 pathTable{i,j} = path{j}; 
                 finalNodeReached(j) = true;
             end
@@ -57,6 +58,7 @@ disp(Atrail);
 Aprob = probabilitiesMatrix(Atrail, Anij, Gdist);
 disp("Transition probability matrix is = ");
 disp(Aprob)
+initGraph('pheromone_end',plotfigure, Atrail);
 initGraph('probabilities', plotfigure, Aprob);
 
  

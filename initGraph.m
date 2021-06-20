@@ -1,4 +1,4 @@
-function [G, Adj] = initGraph(type, plotGraph,A)
+function [G, Adj] = initGraph(type, plotGraph, A)
     param = aco_base_parameters;
     highlight_path = false;
     %condensation_graph = false;
@@ -11,9 +11,12 @@ function [G, Adj] = initGraph(type, plotGraph,A)
         case 'inverse_dist'
             G = graph(param.s,param.t,param.nij,param.names);
             str_title = "Graph of inverse distances";
-        case 'pheromone'
+        case 'pheromone_begin'
             G = graph(param.s,param.t,param.trail,param.names);
-            str_title = "Level of pheromone";
+            str_title = "Starting level of pheromone";
+        case 'pheromone_end'
+            G = graph(A);
+            str_title = "End level of pheromone";
         case 'probabilities'
             G = digraph(A);
             str_title = "Graph with probabilities on the edges";
@@ -25,7 +28,7 @@ function [G, Adj] = initGraph(type, plotGraph,A)
 %             Ainf = V*J*V';
             idx_node = param.startNode;
             path = param.startNode;
-            while idx_node ~= param.idxFood
+            while ~any(idx_node== param.idxFood)
                 x0 = zeros(size(A,1),1);
                 x0(idx_node) = 1;
                 xinf = A'*x0;
