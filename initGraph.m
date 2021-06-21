@@ -35,6 +35,8 @@ function [G, Adj] = initGraph(type, plotGraph, A)
                 [~, idx_node] = max(xinf);
                 path = [path idx_node];
             end
+            disp("shortest path according to ACO is ")
+            disp(path);
         otherwise
             warning("Unexpected argument given")
     end

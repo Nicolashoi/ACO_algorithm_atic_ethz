@@ -50,9 +50,8 @@ for i=1:param.N_ants
         end
     end
     Atrail = updatePheromone(Atrail, path, pathLength, 'AS');
+    
 end
-disp("Path  chosen by the last ant in the network is = ")
-disp(path)
 disp("Pheromone level matrix = ");
 disp(Atrail);
 Aprob = probabilitiesMatrix(Atrail, Anij, Gdist);
@@ -61,4 +60,12 @@ disp(Aprob)
 initGraph('pheromone_end',plotfigure, Atrail);
 initGraph('probabilities', plotfigure, Aprob);
 
- 
+for i=1:length(pathTable)
+    pathMat = cell2mat(pathTable(i,:)');
+    [uniquePath, ~, x] = unique(pathMat,'rows');
+    occurence = histc(x, 1:size(uniquePath,1));
+    group(i).paths = uniquePath;
+    group(i).path_occurence = occurence; 
+end
+    
+    

@@ -28,6 +28,31 @@ graph3.nodes = 1:1:8; %create nodes array
 graph3.idxFood = [4, 8];
 graph3.startNode = 1;
 
+%% Wheatstone
+wheatstone1.s = [1 1 2 3];
+wheatstone1.t = [2 3 4 4];
+wheatstone1.w = [1 2 3 4];
+wheatstone1.names = {'Start', 'n2', 'n3', 'Food'};
+wheatstone1.nodes = 1:1:4; %create nodes array
+wheatstone1.idxFood = 4;
+wheatstone1.startNode = 1;
+
+wheatstone2.s = [1 1 2 3];
+wheatstone2.t = [2 3 4 4];
+wheatstone2.w = [1 1 2 2];
+wheatstone2.names = {'Start', 'n2', 'n3', 'Food'};
+wheatstone2.nodes = 1:1:4; %create nodes array
+wheatstone2.idxFood = 4;
+wheatstone2.startNode = 1;
+
+%%Modified Wheatstone
+wheatstone_new.s = [1 1 2 3 3];
+wheatstone_new.t = [2 3 4 2 4];
+wheatstone_new.w = [2 1 1 1 2];
+wheatstone_new.names = {'Start', 'n2', 'n3', 'Food'};
+wheatstone_new.nodes = 1:1:4; %create nodes array
+wheatstone_new.idxFood = 4;
+wheatstone_new.startNode = 1;
 %% 
 if exist('graph_construction.mat', 'file')
     save('graph_construction.mat','-append')
