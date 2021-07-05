@@ -1,11 +1,15 @@
-function [nextNode] = getNextNode(currentNode,Gdist, Atrail, Anij)
+function [nextNode] = getNextNode(currentNode,Gdist, Atrail, Anij, path)
     %global Atrail Anij
     param = aco_base_parameters;
     %idxCurrentNode = find(currentNode == setOfNextNodes);
     %setOfNextNodes(idxCurrentNode) = []; % remove current node from next possible nodes
     %probSetOfNextNodes(idxCurrentNode) = [];
     % if only allowed move (no backward moves) is end node
-    setOfNextNodes = nearest(Gdist, currentNode, Inf, 'Method', 'unweighted');
+    %setOfNextNodes = nearest(Gdist, currentNode, Inf, 'Method', 'unweighted');
+    allowedNodes = ismember(param.s,currentNode);
+    setOfNextNodes = param.t(allowedNodes);
+    visitedNodesIdx = ismember(setOfNextNodes, path);
+    setOfNextNodes(visitedNodesIdx) = [];
     if length(setOfNextNodes) ==1
         nextNode = setOfNextNodes;
     else

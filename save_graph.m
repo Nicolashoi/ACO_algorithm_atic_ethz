@@ -28,6 +28,14 @@ graph3.nodes = 1:1:8; %create nodes array
 graph3.idxFood = [4, 8];
 graph3.startNode = 1;
 
+%% Graph4
+graph4.s = [2 1 1 1 2 3 3 3 5 5 6 7];
+graph4.t = [1 3 4 6 4 2 5 8 7 6 7 8];
+graph4.w = [1 1 8 5 6 4 2 6 2 1 1 1]; % edge weights
+graph4.names = {'n1', 'n2', 'n3', 'n4','n5', 'n6', 'n7', 'n8'};
+graph4.nodes = 1:1:8; %create nodes array
+graph4.idxFood = [4, 8];
+graph4.startNode = 1;
 %% Wheatstone
 wheatstone1.s = [1 1 2 3];
 wheatstone1.t = [2 3 4 4];
@@ -46,9 +54,9 @@ wheatstone2.idxFood = 4;
 wheatstone2.startNode = 1;
 
 %%Modified Wheatstone
-wheatstone_new.s = [1 1 2 3 3];
-wheatstone_new.t = [2 3 4 2 4];
-wheatstone_new.w = [2 1 1 1 2];
+wheatstone_new.s = [1 3 2 2 3];
+wheatstone_new.t = [2 1 4 3 4];
+wheatstone_new.w = [2 1 1 1 3];
 wheatstone_new.names = {'Start', 'n2', 'n3', 'Food'};
 wheatstone_new.nodes = 1:1:4; %create nodes array
 wheatstone_new.idxFood = 4;

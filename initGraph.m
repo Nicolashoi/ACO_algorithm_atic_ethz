@@ -9,7 +9,7 @@ function [G, Adj] = initGraph(type, plotGraph, A)
             %condensation_graph = true;
             %bins = conncomp(G);
         case 'inverse_dist'
-            G = graph(param.s,param.t,param.nij,param.names);
+            G = digraph(param.s,param.t,param.nij,param.names);
             str_title = "Graph of inverse distances";
         case 'pheromone_begin'
             G = graph(param.s,param.t,param.trail,param.names);
@@ -43,10 +43,10 @@ function [G, Adj] = initGraph(type, plotGraph, A)
     Adj = full(adjacency(G, 'weighted'));
     if plotGraph
         figure()
-        P = plot(G, 'EdgeLabel', G.Edges.Weight);
+        P = plot(G, 'EdgeLabel', G.Edges.Weight, 'EdgeFontWeight','bold','EdgeFontSize',14, 'NodeFontSize',14,'NodeFontWeight','bold');
         highlight(P,param.startNode,'NodeColor',"g", 'Markersize',7) %to highlight the start node
         highlight(P,param.idxFood,'NodeColor',"r",'Markersize',7) %to highlight the end node
-        title(str_title);
+        title(str_title, 'FontSize', 14);
         if highlight_path
            highlight(P,path,'EdgeColor','m','Linewidth',1.5);
         end     
