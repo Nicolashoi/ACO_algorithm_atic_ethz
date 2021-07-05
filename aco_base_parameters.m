@@ -1,8 +1,10 @@
 function param = aco_base_parameters
     %% Graph Parameters
     load('graph_construction')
-    g = wheatstone_new; % change which graph to use here
-    alpha = 2;
+    % choices are: graph1, graph2, graph3, graph4
+    % wheatstone1, wheatstone2, wheatstone_new
+    g = wheatstone1; % change which graph to use here
+    alpha = 1;
     beta = 1;
     
     %% General Parameters

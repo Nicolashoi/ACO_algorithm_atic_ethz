@@ -1,13 +1,10 @@
 function [G, Adj] = initGraph(type, plotGraph, A)
     param = aco_base_parameters;
     highlight_path = false;
-    %condensation_graph = false;
     switch type
         case 'dist'
             G = digraph(param.s,param.t,param.w,param.names);
             str_title = "Graph of distances";
-            %condensation_graph = true;
-            %bins = conncomp(G);
         case 'inverse_dist'
             G = digraph(param.s,param.t,param.nij,param.names);
             str_title = "Graph of inverse distances";
@@ -21,11 +18,7 @@ function [G, Adj] = initGraph(type, plotGraph, A)
             G = digraph(A);
             str_title = "Graph with probabilities on the edges";
             highlight_path = true;
-%             Ashortest = ones(size(A))-A;
-%             Gshortest = digraph(Ashortest);
-%             path = shortestpath(Gshortest,param.startNode, param.idxFood);
-%             [V,J] = jordan(A);
-%             Ainf = V*J*V';
+
             idx_node = param.startNode;
             path = param.startNode;
             while ~any(idx_node== param.idxFood)
